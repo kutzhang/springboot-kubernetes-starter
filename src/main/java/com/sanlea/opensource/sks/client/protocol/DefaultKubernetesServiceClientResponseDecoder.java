@@ -3,7 +3,6 @@ package com.sanlea.opensource.sks.client.protocol;
 import com.alibaba.fastjson.JSON;
 import feign.FeignException;
 import feign.Response;
-import feign.codec.Decoder;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;

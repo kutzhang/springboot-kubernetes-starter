@@ -3,7 +3,6 @@ package com.sanlea.opensource.sks.client.protocol;
 import com.alibaba.fastjson.JSON;
 import feign.RequestTemplate;
 import feign.codec.EncodeException;
-import feign.codec.Encoder;
 
 import java.lang.reflect.Type;
 
