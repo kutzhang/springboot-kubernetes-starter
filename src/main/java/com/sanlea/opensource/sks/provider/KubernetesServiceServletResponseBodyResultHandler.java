@@ -36,7 +36,6 @@ public class KubernetesServiceServletResponseBodyResultHandler implements Respon
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        return selectedContentType.equals(MediaType.APPLICATION_JSON) ?
-                this.kubernetesServiceResponseWrapper.wrap(body) : body;
+        return this.kubernetesServiceResponseWrapper.wrap(body);
     }
 }
