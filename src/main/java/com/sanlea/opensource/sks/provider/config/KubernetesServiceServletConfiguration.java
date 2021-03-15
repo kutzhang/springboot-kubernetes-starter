@@ -23,7 +23,10 @@ public class KubernetesServiceServletConfiguration implements WebMvcConfigurer {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         WebMvcConfigurer.super.configureMessageConverters(converters);
+
+        // remove StringHttpMessageConverters, then add them to the end of converter list
         converters.removeIf(converter -> converter instanceof StringHttpMessageConverter);
         converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        converters.add(new StringHttpMessageConverter(StandardCharsets.ISO_8859_1));
     }
 }
