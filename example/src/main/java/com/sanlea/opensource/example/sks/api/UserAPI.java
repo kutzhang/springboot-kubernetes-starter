@@ -36,4 +36,9 @@ public class UserAPI {
     public String fetchDetail2() {
         return "<h1>Hello1</h1>";
     }
+
+    @GetMapping("/detail3")
+    public String fetchDetail3() {
+        return "OK";
+    }
 }
