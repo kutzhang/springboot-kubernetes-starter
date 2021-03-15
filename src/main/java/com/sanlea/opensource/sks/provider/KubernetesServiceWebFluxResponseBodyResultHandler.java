@@ -15,17 +15,17 @@ import java.util.Objects;
 
 
 /**
- * API response body advice
+ * API response body advice - webflux
  *
  * @author kut
  */
-public class KubernetesServiceResponseBodyResultHandler extends ResponseBodyResultHandler {
+public class KubernetesServiceWebFluxResponseBodyResultHandler extends ResponseBodyResultHandler {
 
     private static MethodParameter param;
 
     static {
         try {
-            param = new MethodParameter(KubernetesServiceResponseBodyResultHandler.class
+            param = new MethodParameter(KubernetesServiceWebFluxResponseBodyResultHandler.class
                     .getDeclaredMethod("methodForParams"), -1);
         } catch (NoSuchMethodException e) {
             // nothing to do
@@ -36,11 +36,12 @@ public class KubernetesServiceResponseBodyResultHandler extends ResponseBodyResu
         return null;
     }
 
-    private final DefaultKubernetesServiceResponseWrapper kubernetesServiceResponseWrapper;
+    private final KubernetesServiceResponseWrapper kubernetesServiceResponseWrapper;
 
-    public KubernetesServiceResponseBodyResultHandler(List<HttpMessageWriter<?>> writers,
-                                                      RequestedContentTypeResolver resolver,
-                                                      DefaultKubernetesServiceResponseWrapper kubernetesServiceResponseWrapper) {
+    public KubernetesServiceWebFluxResponseBodyResultHandler(
+            List<HttpMessageWriter<?>> writers,
+            RequestedContentTypeResolver resolver,
+            KubernetesServiceResponseWrapper kubernetesServiceResponseWrapper) {
         super(writers, resolver);
         this.kubernetesServiceResponseWrapper = kubernetesServiceResponseWrapper;
     }

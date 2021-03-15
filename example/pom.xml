@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.sanlea.opensource.example</groupId>
-    <artifactId>springboot-kubernetes-starter</artifactId>
+    <artifactId>springboot-kubernetes-starter-example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>springboot-kubernetes-starter</name>
     <description>Demo project for Spring Boot Kubernetes Starter</description>
@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>
