@@ -1,7 +1,6 @@
 package com.sanlea.opensource.sks.provider;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * Default kubernetes service response wrapper
@@ -11,7 +10,7 @@ import java.util.Map;
 public class DefaultKubernetesServiceResponseWrapper implements KubernetesServiceResponseWrapper {
     @Override
     public Object wrap(Object data) {
-        Map<String, Object> wrapper = new HashMap<>();
+        var wrapper = new JSONObject();
         wrapper.put("data", data);
         return wrapper;
     }

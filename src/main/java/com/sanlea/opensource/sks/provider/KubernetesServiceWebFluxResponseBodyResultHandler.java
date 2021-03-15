@@ -3,6 +3,7 @@ package com.sanlea.opensource.sks.provider;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.codec.HttpMessageWriter;
 import org.springframework.web.reactive.HandlerResult;
 import org.springframework.web.reactive.accept.RequestedContentTypeResolver;
@@ -56,14 +57,32 @@ public class KubernetesServiceWebFluxResponseBodyResultHandler extends ResponseB
     public Mono<Void> handleResult(ServerWebExchange exchange, HandlerResult result) {
         Object data = result.getReturnValue();
         if (exchange.getResponse().getStatusCode() == HttpStatus.OK) {
-            if (data instanceof Mono) {
-                var mono = (Mono<?>) data;
-                return writeBody(mono.map(this.kubernetesServiceResponseWrapper::wrap), param, exchange);
+            if (Objects.equals(exchange.getResponse().getHeaders().getContentType(), MediaType.APPLICATION_JSON)) {
+                if (data instanceof Mono) {
+                    var mono = (Mono<?>) data;
+                    return writeBody(mono.map(this.kubernetesServiceResponseWrapper::wrap), param, exchange);
+                } else {
+                    return writeBody(Mono.just(this.kubernetesServiceResponseWrapper.wrap(data)), param, exchange);
+                }
             } else {
-                return writeBody(Mono.just(this.kubernetesServiceResponseWrapper.wrap(data)), param, exchange);
+                if (data instanceof Mono) {
+                    var mono = (Mono<?>) data;
+                    return writeBody(mono.map(o -> o), param, exchange);
+                } else {
+                    if (data != null) {
+                        return writeBody(Mono.just(data), param, exchange);
+                    } else {
+                        return writeBody(Mono.empty(), param, exchange);
+                    }
+                }
             }
+
         } else {
-            return writeBody(Mono.just(Objects.requireNonNull(data)), param, exchange);
+            if (data != null) {
+                return writeBody(Mono.just(data), param, exchange);
+            } else {
+                return writeBody(Mono.empty(), param, exchange);
+            }
         }
     }
 }
