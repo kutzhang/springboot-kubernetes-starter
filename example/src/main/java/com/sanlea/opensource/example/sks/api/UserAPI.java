@@ -19,4 +19,9 @@ public class UserAPI {
     public String current() {
         return userService.current();
     }
+
+    @GetMapping("/detail")
+    public String fetchDetail() {
+        return "Hello";
+    }
 }
