@@ -1,8 +1,6 @@
 package com.sanlea.opensource.sks.client;
 
-import feign.codec.Decoder;
-import feign.codec.Encoder;
-import feign.codec.ErrorDecoder;
+import com.sanlea.opensource.sks.client.protocol.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
@@ -14,20 +12,27 @@ import org.springframework.context.annotation.Bean;
 public class KubernetesServiceClientConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(ErrorDecoder.class)
-    public ErrorDecoder buildErrorDecoder() {
+    @ConditionalOnMissingBean(KubernetesServiceErrorDecoder.class)
+    public KubernetesServiceErrorDecoder buildErrorDecoder() {
         return new DefaultKubernetesServiceClientErrorDecoder();
     }
 
     @Bean
-    @ConditionalOnMissingBean(Decoder.class)
-    public Decoder buildDecoder() {
+    @ConditionalOnMissingBean(KubernetesServiceDecoder.class)
+    public KubernetesServiceDecoder buildDecoder() {
         return new DefaultKubernetesServiceClientResponseDecoder();
     }
 
     @Bean
-    @ConditionalOnMissingBean(Encoder.class)
-    public Encoder buildEncoder() {
+    @ConditionalOnMissingBean(KubernetesServiceEncoder.class)
+    public KubernetesServiceEncoder buildEncoder() {
         return new DefaultKubernetesServiceClientRequestEncoder();
+    }
+
+    @Bean
+    public KubernetesServiceProtocol buildKubernetesServiceProtocol(KubernetesServiceEncoder encoder,
+                                                                    KubernetesServiceDecoder decoder,
+                                                                    KubernetesServiceErrorDecoder errorDecoder) {
+        return new KubernetesServiceProtocol(encoder, decoder, errorDecoder);
     }
 }

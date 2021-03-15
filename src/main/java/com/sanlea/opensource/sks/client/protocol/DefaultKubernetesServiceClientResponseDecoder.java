@@ -1,4 +1,4 @@
-package com.sanlea.opensource.sks.client;
+package com.sanlea.opensource.sks.client.protocol;
 
 import com.alibaba.fastjson.JSON;
 import feign.FeignException;
@@ -17,7 +17,7 @@ import static feign.Util.ensureClosed;
  *
  * @author kut
  */
-public class DefaultKubernetesServiceClientResponseDecoder implements Decoder {
+public class DefaultKubernetesServiceClientResponseDecoder implements KubernetesServiceDecoder {
     @Override
     public Object decode(Response response, Type type) throws IOException, FeignException {
         var body = response.body();

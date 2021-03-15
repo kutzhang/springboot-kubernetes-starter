@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import({KubernetesServiceClientRegistrar.class, KubernetesServiceClientConfiguration.class})
+@Import({KubernetesServiceClientConfiguration.class, KubernetesServiceClientRegistrar.class})
 public @interface EnableKubernetesServiceClientSupport {
     // base packages
     String[] basePackages() default {"*"};

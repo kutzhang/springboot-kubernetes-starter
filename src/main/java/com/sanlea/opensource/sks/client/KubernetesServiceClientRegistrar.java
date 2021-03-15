@@ -1,8 +1,5 @@
 package com.sanlea.opensource.sks.client;
 
-import feign.codec.Decoder;
-import feign.codec.Encoder;
-import feign.codec.ErrorDecoder;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -20,19 +17,7 @@ import static org.springframework.beans.factory.config.AutowireCapableBeanFactor
  * @author kut
  */
 public class KubernetesServiceClientRegistrar implements ImportBeanDefinitionRegistrar, BeanClassLoaderAware {
-
-    private final Encoder encoder;
-    private final Decoder decoder;
-    private final ErrorDecoder errorDecoder;
     private ClassLoader beanClassLoader;
-
-    public KubernetesServiceClientRegistrar(Encoder encoder,
-                                            Decoder decoder,
-                                            ErrorDecoder errorDecoder) {
-        this.encoder = encoder;
-        this.decoder = decoder;
-        this.errorDecoder = errorDecoder;
-    }
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata annotationMetadata,
@@ -65,9 +50,6 @@ public class KubernetesServiceClientRegistrar implements ImportBeanDefinitionReg
                     builder.addConstructorArgValue(annotation.cluster());
                     builder.addConstructorArgValue(annotation.port());
                     builder.addConstructorArgValue(clazz);
-                    builder.addConstructorArgValue(encoder);
-                    builder.addConstructorArgValue(decoder);
-                    builder.addConstructorArgValue(errorDecoder);
                     builder.setAutowireMode(AUTOWIRE_BY_TYPE);
                     var beanDefinition = builder.getBeanDefinition();
 

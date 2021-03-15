@@ -1,10 +1,11 @@
-package com.sanlea.opensource.sks.client;
+package com.sanlea.opensource.sks.client.protocol;
 
 import com.alibaba.fastjson.JSON;
 import com.sanlea.opensource.sks.exception.KubernetesServiceException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.BeanClassLoaderAware;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -15,10 +16,11 @@ import java.nio.charset.StandardCharsets;
  *
  * @author kut
  */
-public class DefaultKubernetesServiceClientErrorDecoder extends KubernetesServiceClientErrorDecoder {
+public class DefaultKubernetesServiceClientErrorDecoder implements KubernetesServiceErrorDecoder, BeanClassLoaderAware {
 
     // default decoder
-    private final ErrorDecoder.Default defaultDecoder = new Default();
+    private final ErrorDecoder.Default defaultDecoder = new ErrorDecoder.Default();
+    private ClassLoader beanClassLoader;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -53,5 +55,10 @@ public class DefaultKubernetesServiceClientErrorDecoder extends KubernetesServic
             result = new KubernetesServiceException(e.getMessage());
         }
         return result;
+    }
+
+    @Override
+    public void setBeanClassLoader(ClassLoader beanClassLoader) {
+        this.beanClassLoader = beanClassLoader;
     }
 }

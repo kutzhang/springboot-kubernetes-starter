@@ -1,10 +1,9 @@
 package com.sanlea.opensource.sks.client;
 
+import com.sanlea.opensource.sks.client.protocol.KubernetesServiceProtocol;
+import com.sanlea.opensource.sks.client.protocol.KubernetesServiceProtocolAware;
 import feign.ExceptionPropagationPolicy;
 import feign.Feign;
-import feign.codec.Decoder;
-import feign.codec.Encoder;
-import feign.codec.ErrorDecoder;
 import org.springframework.beans.factory.FactoryBean;
 
 import static java.lang.String.format;
@@ -14,33 +13,25 @@ import static java.lang.String.format;
  *
  * @author kut
  */
-public class KubernetesServiceClientFactoryBean implements FactoryBean<Object> {
+public class KubernetesServiceClientFactoryBean implements FactoryBean<Object>, KubernetesServiceProtocolAware {
 
     private final String name;
     private final String namespace;
     private final String cluster;
     private final int port;
     private final Class<?> clazz;
-    private final Encoder encoder;
-    private final Decoder decoder;
-    private final ErrorDecoder errorDecoder;
+    private KubernetesServiceProtocol kubernetesServiceProtocol;
 
     public KubernetesServiceClientFactoryBean(String name,
                                               String namespace,
                                               String cluster,
                                               int port,
-                                              Class<?> clazz,
-                                              Encoder encoder,
-                                              Decoder decoder,
-                                              ErrorDecoder errorDecoder) {
+                                              Class<?> clazz) {
         this.name = name;
         this.namespace = namespace;
         this.cluster = cluster;
         this.port = port;
         this.clazz = clazz;
-        this.encoder = encoder;
-        this.decoder = decoder;
-        this.errorDecoder = errorDecoder;
     }
 
     @Override
@@ -53,9 +44,9 @@ public class KubernetesServiceClientFactoryBean implements FactoryBean<Object> {
                 this.port
         );
         return Feign.builder()
-                .encoder(encoder)
-                .decoder(decoder)
-                .errorDecoder(errorDecoder)
+                .encoder(this.kubernetesServiceProtocol)
+                .decoder(this.kubernetesServiceProtocol)
+                .errorDecoder(this.kubernetesServiceProtocol)
                 .exceptionPropagationPolicy(ExceptionPropagationPolicy.UNWRAP)
                 .target(this.clazz, url);
     }
@@ -63,5 +54,10 @@ public class KubernetesServiceClientFactoryBean implements FactoryBean<Object> {
     @Override
     public Class<?> getObjectType() {
         return clazz;
+    }
+
+    @Override
+    public void setKubernetesServiceProtocol(KubernetesServiceProtocol kubernetesServiceProtocol) {
+        this.kubernetesServiceProtocol = kubernetesServiceProtocol;
     }
 }
