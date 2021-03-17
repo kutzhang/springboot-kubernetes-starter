@@ -1,5 +1,7 @@
 package com.sanlea.opensource.sks.client;
 
+import org.springframework.stereotype.Component;
+
 import java.lang.annotation.*;
 
 /**
@@ -10,6 +12,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@Component // pretty for idea IDE
 public @interface KubernetesServiceClient {
     // service name
     String name();
