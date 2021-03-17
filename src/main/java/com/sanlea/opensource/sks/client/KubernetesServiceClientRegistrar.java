@@ -1,5 +1,6 @@
 package com.sanlea.opensource.sks.client;
 
+import com.sanlea.opensource.sks.constant.KubernetesServiceClientMode;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -29,6 +30,7 @@ public class KubernetesServiceClientRegistrar implements ImportBeanDefinitionReg
         }
 
         var basePackages = (String[]) attrs.get("basePackages");
+        var mode = (KubernetesServiceClientMode) attrs.get("mode");
         var beanScanner = new KubernetesServiceClientScanner();
 
         for (var basePackage : basePackages) {
@@ -50,6 +52,8 @@ public class KubernetesServiceClientRegistrar implements ImportBeanDefinitionReg
                     builder.addConstructorArgValue(annotation.cluster());
                     builder.addConstructorArgValue(annotation.port());
                     builder.addConstructorArgValue(clazz);
+                    builder.addConstructorArgValue(mode);
+                    builder.addConstructorArgValue(annotation.mockClass());
                     builder.setAutowireMode(AUTOWIRE_BY_TYPE);
                     var beanDefinition = builder.getBeanDefinition();
 
