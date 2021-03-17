@@ -43,17 +43,22 @@ public class KubernetesServiceClientRegistrar implements ImportBeanDefinitionReg
                     }
 
                     var clazz = this.beanClassLoader.loadClass(beanClassName);
-                    var annotation = clazz.getAnnotation(KubernetesServiceClient.class);
+                    var clientAnnotation =
+                            clazz.getAnnotation(KubernetesServiceClient.class);
+                    var mockAnnotation =
+                            clazz.getAnnotation(KubernetesServiceClientMock.class);
+                    Class<?> mockClass = mockAnnotation == null ? void.class : mockAnnotation.value();
 
-                    var builder =
-                            BeanDefinitionBuilder.genericBeanDefinition(KubernetesServiceClientFactoryBean.class);
-                    builder.addConstructorArgValue(annotation.name());
-                    builder.addConstructorArgValue(annotation.namespace());
-                    builder.addConstructorArgValue(annotation.cluster());
-                    builder.addConstructorArgValue(annotation.port());
+                    var builder = BeanDefinitionBuilder.genericBeanDefinition(
+                            KubernetesServiceClientFactoryBean.class
+                    );
+                    builder.addConstructorArgValue(clientAnnotation.name());
+                    builder.addConstructorArgValue(clientAnnotation.namespace());
+                    builder.addConstructorArgValue(clientAnnotation.cluster());
+                    builder.addConstructorArgValue(clientAnnotation.port());
                     builder.addConstructorArgValue(clazz);
                     builder.addConstructorArgValue(mode);
-                    builder.addConstructorArgValue(annotation.mockClass());
+                    builder.addConstructorArgValue(mockClass);
                     builder.setAutowireMode(AUTOWIRE_BY_TYPE);
                     var beanDefinition = builder.getBeanDefinition();
 

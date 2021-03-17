@@ -25,7 +25,4 @@ public @interface KubernetesServiceClient {
 
     // port
     int port() default 8080;
-
-    // mock
-    Class<?> mockClass() default void.class;
 }
