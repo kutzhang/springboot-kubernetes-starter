@@ -1,7 +1,7 @@
 package com.sanlea.opensource.example.sks;
 
 import com.sanlea.opensource.sks.client.EnableKubernetesServiceClientSupport;
-import com.sanlea.opensource.sks.provider.EnableKubernetesServiceSupport;
+import com.sanlea.opensource.sks.provider.EnableKubernetesServiceProviderSupport;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         servicePackages = "com.sanlea.opensource.example.sks.service",
         mockPackages = "com.sanlea.opensource.example.sks.service"
 )
-@EnableKubernetesServiceSupport
+@EnableKubernetesServiceProviderSupport
 public class SpringbootKubernetesStarterApplication {
     public static void main(String[] args) {
         SpringApplication.run(SpringbootKubernetesStarterApplication.class, args);

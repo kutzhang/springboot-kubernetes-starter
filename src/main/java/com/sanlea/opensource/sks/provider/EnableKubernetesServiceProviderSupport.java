@@ -13,5 +13,5 @@ import java.lang.annotation.*;
 @Import({KubernetesServiceCommonConfiguration.class,
         KubernetesServiceServletConfiguration.class,
         KubernetesServiceWebfluxConfiguration.class})
-public @interface EnableKubernetesServiceSupport {
+public @interface EnableKubernetesServiceProviderSupport {
 }
