@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component // pretty for idea IDE
-public @interface KubernetesServiceClient {
+public @interface KubernetesService {
     // service name
     String name();
 

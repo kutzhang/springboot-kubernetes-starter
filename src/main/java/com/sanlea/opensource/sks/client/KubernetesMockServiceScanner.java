@@ -10,16 +10,16 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  *
  * @author kut
  */
-public class KubernetesServiceClientScanner extends ClassPathScanningCandidateComponentProvider {
+public class KubernetesMockServiceScanner extends ClassPathScanningCandidateComponentProvider {
 
-    public KubernetesServiceClientScanner() {
+    public KubernetesMockServiceScanner() {
         super(false);
-        this.addIncludeFilter(new AnnotationTypeFilter(KubernetesService.class));
+        this.addIncludeFilter(new AnnotationTypeFilter(KubernetesMockService.class));
     }
 
     @Override
     protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
         AnnotationMetadata metadata = beanDefinition.getMetadata();
-        return metadata.isInterface() && metadata.hasAnnotation(KubernetesService.class.getName());
+        return metadata.hasAnnotation(KubernetesMockService.class.getName());
     }
 }

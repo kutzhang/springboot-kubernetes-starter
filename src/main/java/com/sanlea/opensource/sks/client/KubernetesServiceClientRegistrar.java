@@ -1,6 +1,5 @@
 package com.sanlea.opensource.sks.client;
 
-import com.sanlea.opensource.sks.constant.KubernetesServiceClientMode;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -8,7 +7,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE;
 
@@ -17,7 +17,8 @@ import static org.springframework.beans.factory.config.AutowireCapableBeanFactor
  *
  * @author kut
  */
-public class KubernetesServiceClientRegistrar implements ImportBeanDefinitionRegistrar, BeanClassLoaderAware {
+public class KubernetesServiceClientRegistrar
+        implements ImportBeanDefinitionRegistrar, BeanClassLoaderAware {
     private ClassLoader beanClassLoader;
 
     @Override
@@ -29,43 +30,62 @@ public class KubernetesServiceClientRegistrar implements ImportBeanDefinitionReg
             return;
         }
 
-        var basePackages = (String[]) attrs.get("basePackages");
-        var mode = (KubernetesServiceClientMode) attrs.get("mode");
+        var servicePackages = (String[]) attrs.get("servicePackages");
+        var mockPackages = (String[]) attrs.get("mockPackages");
+
         var beanScanner = new KubernetesServiceClientScanner();
+        var mockScanner = new KubernetesMockServiceScanner();
 
-        for (var basePackage : basePackages) {
-            Set<BeanDefinition> serviceMetas = beanScanner.findCandidateComponents(basePackage);
-            for (BeanDefinition meta : serviceMetas) {
+        var serviceDefinitions = new HashSet<BeanDefinition>();
+        var mockMapping = new HashMap<Class<?>, Class<?>>();
+        for (var servicePackage : servicePackages) {
+            serviceDefinitions.addAll(beanScanner.findCandidateComponents(servicePackage));
+        }
+        for (var mockPackage : mockPackages) {
+            var definitions = mockScanner.findCandidateComponents(mockPackage);
+            definitions.forEach(definition -> {
                 try {
-                    var beanClassName = meta.getBeanClassName();
-                    if (beanClassName == null) {
-                        continue;
-                    }
-
-                    var clazz = this.beanClassLoader.loadClass(beanClassName);
-                    var clientAnnotation =
-                            clazz.getAnnotation(KubernetesServiceClient.class);
-                    var mockAnnotation =
-                            clazz.getAnnotation(KubernetesServiceClientMock.class);
-                    Class<?> mockClass = mockAnnotation == null ? void.class : mockAnnotation.value();
-
-                    var builder = BeanDefinitionBuilder.genericBeanDefinition(
-                            KubernetesServiceClientFactoryBean.class
-                    );
-                    builder.addConstructorArgValue(clientAnnotation.name());
-                    builder.addConstructorArgValue(clientAnnotation.namespace());
-                    builder.addConstructorArgValue(clientAnnotation.cluster());
-                    builder.addConstructorArgValue(clientAnnotation.port());
-                    builder.addConstructorArgValue(clazz);
-                    builder.addConstructorArgValue(mode);
-                    builder.addConstructorArgValue(mockClass);
-                    builder.setAutowireMode(AUTOWIRE_BY_TYPE);
-                    var beanDefinition = builder.getBeanDefinition();
-
-                    registry.registerBeanDefinition(beanClassName, beanDefinition);
+                    var mockClassName = definition.getBeanClassName();
+                    var mockClass = this.beanClassLoader.loadClass(mockClassName);
+                    var mockServiceAnnotation =
+                            mockClass.getAnnotation(KubernetesMockService.class);
+                    mockMapping.put(mockServiceAnnotation.value(), mockClass);
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
+            });
+        }
+
+        for (var definition : serviceDefinitions) {
+            try {
+                var beanClassName = definition.getBeanClassName();
+                if (beanClassName == null) {
+                    continue;
+                }
+
+                var serviceClazz = this.beanClassLoader.loadClass(beanClassName);
+                var serviceAnnotation =
+                        serviceClazz.getAnnotation(KubernetesService.class);
+                Class<?> mockClass = mockMapping.get(serviceClazz);
+                if (mockClass == null) {
+                    mockClass = void.class;
+                }
+
+                var builder = BeanDefinitionBuilder.genericBeanDefinition(
+                        KubernetesServiceClientFactoryBean.class
+                );
+                builder.addConstructorArgValue(serviceAnnotation.name());
+                builder.addConstructorArgValue(serviceAnnotation.namespace());
+                builder.addConstructorArgValue(serviceAnnotation.cluster());
+                builder.addConstructorArgValue(serviceAnnotation.port());
+                builder.addConstructorArgValue(serviceClazz);
+                builder.addConstructorArgValue(mockClass);
+                builder.setAutowireMode(AUTOWIRE_BY_TYPE);
+                var beanDefinition = builder.getBeanDefinition();
+
+                registry.registerBeanDefinition(beanClassName, beanDefinition);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }

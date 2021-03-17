@@ -6,7 +6,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@EnableKubernetesServiceClientSupport(basePackages = "com.sanlea.opensource.example.sks.service")
+@EnableKubernetesServiceClientSupport(
+        servicePackages = "com.sanlea.opensource.example.sks.service",
+        mockPackages = "com.sanlea.opensource.example.sks.service"
+)
 @EnableKubernetesServiceSupport
 public class SpringbootKubernetesStarterApplication {
     public static void main(String[] args) {

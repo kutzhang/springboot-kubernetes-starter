@@ -2,6 +2,7 @@ package com.sanlea.opensource.sks.client;
 
 import com.sanlea.opensource.sks.client.protocol.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Bean;
  *
  * @author kut
  */
+@ConfigurationPropertiesScan(basePackages = "com.sanlea.opensource.sks.client")
 public class KubernetesServiceClientConfiguration {
 
     @Bean
