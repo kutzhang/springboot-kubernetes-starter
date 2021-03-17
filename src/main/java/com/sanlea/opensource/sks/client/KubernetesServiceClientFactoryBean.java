@@ -24,7 +24,7 @@ public class KubernetesServiceClientFactoryBean
     private final String cluster;
     private final int port;
     private final Class<?> serviceClass;
-    private boolean inMockMode;
+    private boolean mockEnable;
     private final Class<?> mockClass;
     private KubernetesServiceProtocol kubernetesServiceProtocol;
 
@@ -44,7 +44,7 @@ public class KubernetesServiceClientFactoryBean
 
     @Override
     public Object getObject() {
-        if (inMockMode && this.mockClass != void.class) {
+        if (mockEnable && this.mockClass != void.class) {
             try {
                 return this.mockClass.getDeclaredConstructor().newInstance();
             } catch (Exception e) {
@@ -80,6 +80,6 @@ public class KubernetesServiceClientFactoryBean
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         var properties = applicationContext.getBean(KubernetesClientProperties.class);
-        this.inMockMode = properties.isInMockMode();
+        this.mockEnable = properties.isMockEnable();
     }
 }

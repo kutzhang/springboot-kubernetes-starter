@@ -15,8 +15,8 @@ import java.lang.annotation.*;
 @Import({KubernetesServiceClientConfiguration.class, KubernetesServiceClientRegistrar.class})
 public @interface EnableKubernetesServiceClientSupport {
     // service packages
-    String[] servicePackages() default {"*"};
+    String[] servicePackages() default {};
 
     // mock packages
-    String[] mockPackages() default {"*"};
+    String[] mockPackages() default {};
 }

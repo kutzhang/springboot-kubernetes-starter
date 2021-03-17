@@ -16,6 +16,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("spring.kubernetes.service.client")
 public class KubernetesClientProperties {
 
-    // in mock mode
-    private boolean inMockMode;
+    // mock enable
+    private boolean mockEnable;
 }
