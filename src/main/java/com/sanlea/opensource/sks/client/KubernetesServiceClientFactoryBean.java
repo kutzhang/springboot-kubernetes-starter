@@ -45,7 +45,7 @@ public class KubernetesServiceClientFactoryBean
     @Override
     public Object getObject() {
         if (mockEnable) {
-            if (mockInfo.getType().equals(KubernetesMockType.MOCK_CLASS)) {
+            if (mockInfo.getType().equals(KubernetesMockType.MOCK_URL)) {
                 return Feign.builder()
                         .encoder(this.kubernetesServiceProtocol)
                         .decoder(this.kubernetesServiceProtocol)
