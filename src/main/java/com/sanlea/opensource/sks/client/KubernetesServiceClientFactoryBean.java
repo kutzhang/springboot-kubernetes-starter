@@ -25,7 +25,7 @@ public class KubernetesServiceClientFactoryBean
     private final int port;
     private final Class<?> serviceClass;
     private boolean mockEnable;
-    private final Class<?> mockClass;
+    private final KubernetesMockServiceInfo mockInfo;
     private KubernetesServiceProtocol kubernetesServiceProtocol;
 
     public KubernetesServiceClientFactoryBean(String name,
@@ -33,22 +33,31 @@ public class KubernetesServiceClientFactoryBean
                                               String cluster,
                                               int port,
                                               Class<?> serviceClass,
-                                              Class<?> mockClass) {
+                                              KubernetesMockServiceInfo mockServiceInfo) {
         this.name = name;
         this.namespace = namespace;
         this.cluster = cluster;
         this.port = port;
         this.serviceClass = serviceClass;
-        this.mockClass = mockClass;
+        this.mockInfo = mockServiceInfo;
     }
 
     @Override
     public Object getObject() {
-        if (mockEnable && this.mockClass != void.class) {
-            try {
-                return this.mockClass.getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        if (mockEnable) {
+            if (mockInfo.getType().equals(KubernetesMockType.MOCK_CLASS)) {
+                return Feign.builder()
+                        .encoder(this.kubernetesServiceProtocol)
+                        .decoder(this.kubernetesServiceProtocol)
+                        .errorDecoder(this.kubernetesServiceProtocol)
+                        .exceptionPropagationPolicy(ExceptionPropagationPolicy.UNWRAP)
+                        .target(this.serviceClass, mockInfo.getMockUrl());
+            } else {
+                try {
+                    return this.mockInfo.getMockClass().getDeclaredConstructor().newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else {
             String url = format(

@@ -37,7 +37,7 @@ public class KubernetesServiceClientRegistrar
         var mockScanner = new KubernetesMockServiceScanner();
 
         var serviceDefinitions = new HashSet<BeanDefinition>();
-        var mockMapping = new HashMap<Class<?>, Class<?>>();
+        var mockMapping = new HashMap<Class<?>, KubernetesMockServiceInfo>();
         for (var servicePackage : servicePackages) {
             serviceDefinitions.addAll(beanScanner.findCandidateComponents(servicePackage));
         }
@@ -49,7 +49,10 @@ public class KubernetesServiceClientRegistrar
                     var mockClass = this.beanClassLoader.loadClass(mockClassName);
                     var mockServiceAnnotation =
                             mockClass.getAnnotation(KubernetesMockService.class);
-                    mockMapping.put(mockServiceAnnotation.value(), mockClass);
+
+                    mockMapping.put(mockServiceAnnotation.targetServiceClass(), new KubernetesMockServiceInfo(
+                            mockServiceAnnotation.type(), mockClass, mockServiceAnnotation.mockUrl()
+                    ));
                 } catch (ClassNotFoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -66,10 +69,7 @@ public class KubernetesServiceClientRegistrar
                 var serviceClazz = this.beanClassLoader.loadClass(beanClassName);
                 var serviceAnnotation =
                         serviceClazz.getAnnotation(KubernetesService.class);
-                Class<?> mockClass = mockMapping.get(serviceClazz);
-                if (mockClass == null) {
-                    mockClass = void.class;
-                }
+                var mockInfo = mockMapping.get(serviceClazz);
 
                 var builder = BeanDefinitionBuilder.genericBeanDefinition(
                         KubernetesServiceClientFactoryBean.class
@@ -79,7 +79,7 @@ public class KubernetesServiceClientRegistrar
                 builder.addConstructorArgValue(serviceAnnotation.cluster());
                 builder.addConstructorArgValue(serviceAnnotation.port());
                 builder.addConstructorArgValue(serviceClazz);
-                builder.addConstructorArgValue(mockClass);
+                builder.addConstructorArgValue(mockInfo);
                 builder.setAutowireMode(AUTOWIRE_BY_TYPE);
                 var beanDefinition = builder.getBeanDefinition();
 
