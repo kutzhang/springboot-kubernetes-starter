@@ -14,6 +14,7 @@ import java.lang.reflect.Type;
 public class DefaultKubernetesServiceClientRequestEncoder implements KubernetesServiceEncoder {
     @Override
     public void encode(Object o, Type type, RequestTemplate requestTemplate) throws EncodeException {
+        requestTemplate.header("Content-Type", "application/json");
         requestTemplate.body(
                 JSON.toJSONString(o)
         );
