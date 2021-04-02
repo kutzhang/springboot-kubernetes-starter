@@ -28,6 +28,7 @@ public class KubernetesServiceWebFluxResponseBodyResultHandler extends ResponseB
                     .getDeclaredMethod("methodForParams"), -1);
         } catch (NoSuchMethodException e) {
             // nothing to do
+            methodForParams();
         }
     }
 
