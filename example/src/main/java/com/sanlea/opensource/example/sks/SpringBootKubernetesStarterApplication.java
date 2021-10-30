@@ -11,8 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         mockPackages = "com.sanlea.opensource.example.sks.service"
 )
 @EnableKubernetesServiceProviderSupport
-public class SpringbootKubernetesStarterApplication {
+public class SpringBootKubernetesStarterApplication {
     public static void main(String[] args) {
-        SpringApplication.run(SpringbootKubernetesStarterApplication.class, args);
+        SpringApplication.run(SpringBootKubernetesStarterApplication.class, args);
     }
 }
